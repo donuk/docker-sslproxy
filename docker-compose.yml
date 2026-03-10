@@ -1,0 +1,14 @@
+---
+services:
+  proxy:
+    build:
+      context: .
+    ports:
+      - 443:443
+      - 80:80
+    environment:
+      BACKEND: nginx:80
+      DOMAIN: acme.com
+
+  nginx:
+    image: nginx:latest
