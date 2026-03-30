@@ -7,7 +7,7 @@ This attempts to auto-configure an ssl proxy using caddy, it's basically a wrapp
 To proxy http://example.com and make it visible at https://my-domain.com.
 
 ```
-docker run -p 443:443 -p 80:80 -e BACKEND=example.com DOMAIN=my-domain.com --rm donuk/selfsignedhttpsproxy
+docker run -p 443:443 -p 80:80 -v $PWD/persisted-ssl-files:/data -e BACKEND=example.com DOMAIN=my-domain.com --rm donuk/sslproxy
 ```
 
 The SSL configuration will only work if the container is accessible at my-domain.com, otherwise this will fail to boot.  I should add a failover to self signed SSL really, but that's a job for later.

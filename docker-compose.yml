@@ -9,6 +9,8 @@ services:
     environment:
       BACKEND: nginx:80
       DOMAIN: acme.com
+    volumes:
+      - ./persist:/data
 
   nginx:
     image: nginx:latest
