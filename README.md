@@ -10,4 +10,4 @@ To proxy http://example.com and make it visible at https://my-domain.com.
 docker run -p 443:443 -p 80:80 -v $PWD/persisted-ssl-files:/data -e BACKEND=example.com DOMAIN=my-domain.com --rm donuk/sslproxy
 ```
 
-The SSL configuration will only work if the container is accessible at my-domain.com, otherwise this will fail to boot.  I should add a failover to self signed SSL really, but that's a job for later.
+The SSL configuration will only work if the container is accessible at my-domain.com. If the automatic Let's Encrypt SSL certificate fails (for example, if the domain is not accessible), the container will automatically fall back to a self-signed SSL certificate.
