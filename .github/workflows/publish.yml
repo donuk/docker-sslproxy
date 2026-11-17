@@ -10,9 +10,14 @@ on:
     - cron: "17 3 * * 1"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   docker:
-    uses: donuk/github-build-to-dockerhub/.github/workflows/docker-publish.yml@master
+    permissions:
+      contents: read
+    uses: donuk/github-build-to-dockerhub/.github/workflows/docker-publish.yml@9fa18073ee8b6da38a358600f70171f029fa832f # master@2026-11-17
     with:
       image_name: donuk/sslproxy
       test_script: |
