@@ -1,4 +1,4 @@
-FROM caddy:2
+FROM caddy:2.11.9
 
 RUN cat > /entrypoint.sh <<'EOF'
 #!/bin/sh
