@@ -10,20 +10,30 @@ FALLBACK_MARKER=/tmp/ssl_fallback_marker
 RETRY_INTERVAL=$((6 * 60 * 60)) # 6 hours in seconds
 
 render_caddyfile_le() {
-  cat > /etc/caddy/Caddyfile <<CADDYFILE
-$DOMAIN {
-	reverse_proxy $BACKEND
-}
-CADDYFILE
+  {
+    echo "$DOMAIN {"
+    if [ -n "${ALLOWED_IPS:-}" ]; then
+      IPS=$(echo "$ALLOWED_IPS" | tr ',' ' ' | awk '{$1=$1; print}')
+      echo "	@denied not remote_ip $IPS"
+      echo "	respond @denied 403"
+    fi
+    echo "	reverse_proxy $BACKEND"
+    echo "}"
+  } > /etc/caddy/Caddyfile
 }
 
 render_caddyfile_selfsigned() {
-  cat > /etc/caddy/Caddyfile <<CADDYFILE
-$DOMAIN {
-	reverse_proxy $BACKEND
-	tls internal
-}
-CADDYFILE
+  {
+    echo "$DOMAIN {"
+    if [ -n "${ALLOWED_IPS:-}" ]; then
+      IPS=$(echo "$ALLOWED_IPS" | tr ',' ' ' | awk '{$1=$1; print}')
+      echo "	@denied not remote_ip $IPS"
+      echo "	respond @denied 403"
+    fi
+    echo "	reverse_proxy $BACKEND"
+    echo "	tls internal"
+    echo "}"
+  } > /etc/caddy/Caddyfile
 }
 
 start_caddy() {
