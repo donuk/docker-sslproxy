@@ -24,7 +24,6 @@ render_caddyfile_le() {
       echo "	@denied not remote_ip $IPS"
       echo "	handle @denied {"
       if is_true "${DEBUG_BLOCKED_IPS:-}"; then
-        echo "		log"
         echo "		log_append blocked_ip {remote_host}"
       fi
       echo "		respond 403"
@@ -49,7 +48,6 @@ render_caddyfile_selfsigned() {
       echo "	@denied not remote_ip $IPS"
       echo "	handle @denied {"
       if is_true "${DEBUG_BLOCKED_IPS:-}"; then
-        echo "		log"
         echo "		log_append blocked_ip {remote_host}"
       fi
       echo "		respond 403"
