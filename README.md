@@ -16,6 +16,8 @@ The SSL configuration will only work if the container is accessible at my-domain
 
 Set `ALLOWED_IPS` to a comma-separated list of allowed IPv4/IPv6 addresses or CIDR ranges. Requests from other client IPs receive `403`.
 
+Set `DEBUG_BLOCKED_IPS=true` to emit Caddy access logs and append the blocked client IP to denied requests.
+
 ```
 docker run -p 443:443 -p 80:80 -v $PWD/persisted-ssl-files:/data \
   -e BACKEND=example.com \

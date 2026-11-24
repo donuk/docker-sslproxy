@@ -9,13 +9,32 @@ ERROR_PATTERNS='rateLimited|too many certificates|certificate has already been r
 FALLBACK_MARKER=/tmp/ssl_fallback_marker
 RETRY_INTERVAL=$((6 * 60 * 60)) # 6 hours in seconds
 
+is_true() {
+  case "$(echo "${1:-}" | tr '[:upper:]' '[:lower:]')" in
+    1|true|yes|on) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 render_caddyfile_le() {
   {
     echo "$DOMAIN {"
     if [ -n "${ALLOWED_IPS:-}" ]; then
       IPS=$(echo "$ALLOWED_IPS" | tr ',' ' ' | awk '{$1=$1; print}')
       echo "	@denied not remote_ip $IPS"
-      echo "	respond @denied 403"
+      echo "	handle @denied {"
+      if is_true "${DEBUG_BLOCKED_IPS:-}"; then
+        echo "		log"
+        echo "		log_append blocked_ip {remote_host}"
+      fi
+      echo "		respond 403"
+      echo "	}"
+    fi
+    if is_true "${DEBUG_BLOCKED_IPS:-}"; then
+      echo "	log {"
+      echo "		output stdout"
+      echo "		format console"
+      echo "	}"
     fi
     echo "	reverse_proxy $BACKEND"
     echo "}"
@@ -28,7 +47,19 @@ render_caddyfile_selfsigned() {
     if [ -n "${ALLOWED_IPS:-}" ]; then
       IPS=$(echo "$ALLOWED_IPS" | tr ',' ' ' | awk '{$1=$1; print}')
       echo "	@denied not remote_ip $IPS"
-      echo "	respond @denied 403"
+      echo "	handle @denied {"
+      if is_true "${DEBUG_BLOCKED_IPS:-}"; then
+        echo "		log"
+        echo "		log_append blocked_ip {remote_host}"
+      fi
+      echo "		respond 403"
+      echo "	}"
+    fi
+    if is_true "${DEBUG_BLOCKED_IPS:-}"; then
+      echo "	log {"
+      echo "		output stdout"
+      echo "		format console"
+      echo "	}"
     fi
     echo "	reverse_proxy $BACKEND"
     echo "	tls internal"
